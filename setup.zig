@@ -1,5 +1,4 @@
 const std = @import("std");
-const spec_uri = "https://raw.githubusercontent.com/KhronosGroup/Vulkan-Headers/main/registry/vk.xml";
 
 fn download_file(client: *std.http.Client, url: []const u8, output_path: []const u8) !void {
     var request = try client.request(.GET, try std.Uri.parse(url), .{ .allocator = client.allocator }, .{});
@@ -26,5 +25,24 @@ pub fn main() !void {
     const allocator = arena_allocator.allocator();
 
     var client = std.http.Client{ .allocator = allocator };
-    try download_file(&client, spec_uri, "vk.xml");
+    try download_file(&client, "https://raw.githubusercontent.com/KhronosGroup/Vulkan-Headers/main/registry/vk.xml", "vk.xml");
+
+    // go get "vk.zig from cache and put it in the src dir for intelisense"
+    const cwd = std.fs.cwd();
+
+    var dir = try cwd.openDir("zig-cache", .{});
+    defer dir.close();
+
+    var iterable_dir = try dir.openIterableDir(".", .{});
+    defer iterable_dir.close();
+
+    var dir_walker = try iterable_dir.walk(allocator);
+    defer dir_walker.deinit();
+
+    while (try dir_walker.next()) |entity| {
+        if (std.mem.eql(u8, entity.basename, "vk.zig")) {
+            try dir.copyFile(entity.path, cwd, "./src/vk.zig", .{});
+        }
+    }
+    // end intelisense setup
 }

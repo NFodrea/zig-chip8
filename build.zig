@@ -68,10 +68,10 @@ pub fn build(b: *std.Build) void {
     const test_step = b.step("test", "Run unit tests");
     test_step.dependOn(&run_unit_tests.step);
 
-    const vkzig_dep = b.dependency("vulkan_zig", .{
+    const vkzig_dep = b.dependency("vulkan", .{
         .target = target,
         .optimize = optimize,
-        .registry = @as([]const u8, b.pathFromRoot("path/to/vk.xml")),
+        .registry = @as([]const u8, b.pathFromRoot("vk.xml")),
     });
     const vkzig_bindings = vkzig_dep.module("vulkan-zig");
     exe.addModule("vulkan-zig", vkzig_bindings);
