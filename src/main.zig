@@ -20,7 +20,6 @@ var texture: ?*c.SDL_Texture = null;
 // var cpu: *CHIP8 = undefined;
 
 pub fn init() !void {
-    _ = vk;
     if (c.SDL_Init(c.SDL_INIT_VIDEO) != 0) {
         std.debug.print("SDL Error {s}\n", .{c.SDL_GetError()});
         return error.FailedToInitSDL;
