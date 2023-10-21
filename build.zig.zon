@@ -12,10 +12,10 @@
         ".gitignore",
     },
     .dependencies = .{
-        // .vulkan_zig = .{
-        //     .url = "https://github.com/Snektron/vulkan-zig/archive/1e4e90ffb14084357265d79b58e5f1b1c9396069.tar.gz",
-        //     .hash = "1220d3e1254af9c8fd4c3f09bd9f50f51dc5eaa5506f845ed67bcd75e1e2961ce1ea",
-        // },
+        .vulkan_zig = .{
+            .url = "https://github.com/Snektron/vulkan-zig/archive/6d46195c99658ce4495b3317329c4bae035ed48d.tar.gz",
+            .hash = "12206aed40c08f1c22639957451a426c316f8f1c4db4ceef5b51d026ee9b736b64b0",
+        },
         .sdl = .{
             .url = "https://github.com/Beyley/SDL/archive/0a6995fbf53a00e181ddac434eaab3dd48ce1846.tar.gz",
             .hash = "1220f770aec419d2052a16d4f1dd8bca0f6d3b6de60e81b362bacc7b7dbf7dc443a5",

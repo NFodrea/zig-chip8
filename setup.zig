@@ -1,3 +1,4 @@
+// This file is basically worthless for now ignore it
 const std = @import("std");
 
 fn download_file(client: *std.http.Client, url: []const u8, output_path: []const u8) !void {
@@ -17,6 +18,7 @@ fn download_file(client: *std.http.Client, url: []const u8, output_path: []const
 }
 
 pub fn main() !void {
+    // refactor this later to allow for multi file lookup
     var general_purpose_allocator = std.heap.GeneralPurposeAllocator(.{}){};
     defer std.debug.assert(general_purpose_allocator.deinit() == .ok);
 
