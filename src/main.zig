@@ -54,6 +54,7 @@ pub fn main() !void {
 
     var run: bool = true;
     while (run) {
+        // TODO emulate chip8
         var event: c.SDL_Event = undefined;
 
         while (c.SDL_PollEvent(&event) != 0) {
@@ -66,7 +67,6 @@ pub fn main() !void {
         _ = c.SDL_RenderClear(renderer);
         _ = c.SDL_RenderCopy(renderer, texture, null, null);
         _ = c.SDL_RenderPresent(renderer);
-        //Sleep for 10ms, to prevent the CPU from being eaten by 100000 loops per second
-        std.time.sleep(16 * 1000 * 1000);
+        c.SDL_Delay(16); // approx 60hz
     }
 }

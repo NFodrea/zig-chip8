@@ -9,6 +9,7 @@
         "setup.zig",
         "vk.xml",
         "README.md",
+        ".gitignore",
     },
     .dependencies = .{
         // .vulkan_zig = .{
