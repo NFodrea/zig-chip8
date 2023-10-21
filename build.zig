@@ -68,11 +68,20 @@ pub fn build(b: *std.Build) void {
     const test_step = b.step("test", "Run unit tests");
     test_step.dependOn(&run_unit_tests.step);
 
-    const vkzig_dep = b.dependency("vulkan", .{
+    // const vk_gen = b.dependency("vulkan_zig", .{}).artifact("generator"); // get generator executable reference
+
+    // const generate_cmd = b.addRunArtifact(vk_gen);
+    // generate_cmd.addArg(b.pathFromRoot("vk.xml")); // path to xml file to use when generating the bindings
+
+    // const vulkan_zig = b.addModule("vulkan-zig", .{
+    //     .source_file = generate_cmd.addOutputFileArg("vk.zig"), // this is the FileSource representing the generated bindings
+    // });
+    // exe.addModule("vulkan-zig", vulkan_zig);
+
+    const sdl_dep = b.dependency("sdl", .{
         .target = target,
         .optimize = optimize,
-        .registry = @as([]const u8, b.pathFromRoot("vk.xml")),
     });
-    const vkzig_bindings = vkzig_dep.module("vulkan-zig");
-    exe.addModule("vulkan-zig", vkzig_bindings);
+    const sdl_lib = sdl_dep.artifact("SDL2");
+    exe.linkLibrary(sdl_lib);
 }

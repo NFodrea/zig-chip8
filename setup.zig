@@ -4,7 +4,7 @@ fn download_file(client: *std.http.Client, url: []const u8, output_path: []const
     var request = try client.request(.GET, try std.Uri.parse(url), .{ .allocator = client.allocator }, .{});
     defer request.deinit();
 
-    try request.start();
+    try request.start(.{ .raw_uri = true });
     try request.wait();
     if (request.response.status != .ok) {
         return error.unexpectedError;

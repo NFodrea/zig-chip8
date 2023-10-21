@@ -1,9 +1,72 @@
 const std = @import("std");
-const vk = @import("vk.zig");
+const c = @import("c.zig");
+// const vk = @import("vulkan-zig");
+// const CHIP8 = @import("chip8.zig");
 
-const BaseDispatch = vk.BaseWrapper(.{
-    .createInstance = true,
-});
+// const BaseDispatch = vk.BaseWrapper(.{
+//     .createInstance = true,
+// });
+
+// const process = std.process;
+
+var window: ?*c.SDL_Window = null;
+var renderer: ?*c.SDL_Renderer = null;
+var texture: ?*c.SDL_Texture = null;
+
+// pub fn println(msg: []const u8) void {
+//     std.debug.print("{s}\n", .{msg});
+// }
+
+// var cpu: *CHIP8 = undefined;
+
+pub fn init() !void {
+    if (c.SDL_Init(c.SDL_INIT_VIDEO) != 0) {
+        std.debug.print("SDL Error {s}\n", .{c.SDL_GetError()});
+        return error.FailedToInitSDL;
+    }
+
+    window = c.SDL_CreateWindow("CHIP8", c.SDL_WINDOWPOS_CENTERED, c.SDL_WINDOWPOS_CENTERED, 1024, 512, 0).?;
+
+    renderer = c.SDL_CreateRenderer(window, -1, c.SDL_RENDERER_ACCELERATED);
+
+    if (renderer == null) {
+        var err = c.SDL_GetError();
+        std.debug.print("{s}\n", .{err});
+    }
+
+    texture = c.SDL_CreateTexture(renderer, c.SDL_PIXELFORMAT_RGBA8888, c.SDL_TEXTUREACCESS_STREAMING, 64, 32);
+}
+
+pub fn cleanUp() void {
+    c.SDL_DestroyTexture(texture);
+    c.SDL_DestroyRenderer(renderer);
+    c.SDL_DestroyWindow(window);
+    c.SDL_Quit();
+}
+
 pub fn main() !void {
-    _ = vk;
+    // var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    // defer arena.deinit();
+    // const allocator = arena.allocator();
+
+    try init();
+    defer cleanUp();
+
+    var run: bool = true;
+    while (run) {
+        var event: c.SDL_Event = undefined;
+
+        while (c.SDL_PollEvent(&event) != 0) {
+            switch (event.type) {
+                c.SDL_QUIT => run = false,
+                // TODO key presses
+                else => {},
+            }
+        }
+        _ = c.SDL_RenderClear(renderer);
+        _ = c.SDL_RenderCopy(renderer, texture, null, null);
+        _ = c.SDL_RenderPresent(renderer);
+        //Sleep for 10ms, to prevent the CPU from being eaten by 100000 loops per second
+        std.time.sleep(16 * 1000 * 1000);
+    }
 }
