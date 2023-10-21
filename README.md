@@ -12,5 +12,8 @@
 - display is 64x32 pixels in monochrome
 - sprite size is up to 15 bytes
 - 36 total instructions
-[Chip-8 Ref](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM#2.2)
+- [ROMS for testing](https://github.com/kripod/chip8-roms)
+- [BC_test rom](https://github.com/cj1128/chip8-emulator/tree/master/rom)
+- [test_opcode](https://github.com/corax89/chip8-test-rom)
+- [Chip-8 Technical Ref](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM#2.2)
 
