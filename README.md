@@ -15,5 +15,5 @@
 - [ROMS for testing](https://github.com/kripod/chip8-roms)
 - [BC_test rom](https://github.com/cj1128/chip8-emulator/tree/master/rom)
 - [test_opcode](https://github.com/corax89/chip8-test-rom)
-- [Chip-8 Technical Ref](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM#2.2)
+- [Chip-8 Technical Ref](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM)
 

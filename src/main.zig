@@ -1,13 +1,14 @@
 const std = @import("std");
 const c = @import("c.zig");
 const vk = @import("vk.zig");
-const CHIP8 = @import("chip8.zig");
+// Zig lets you use files as structs, that's what I'm doing with chip8.zig
+const chip8 = @import("chip8.zig");
 
 const BaseDispatch = vk.BaseWrapper(.{
     .enumerateInstanceVersion = true,
 });
 
-// const process = std.process;
+var c8: *chip8 = undefined;
 
 var window: ?*c.SDL_Window = null;
 var renderer: ?*c.SDL_Renderer = null;
@@ -17,7 +18,30 @@ var texture: ?*c.SDL_Texture = null;
 //     std.debug.print("{s}\n", .{msg});
 // }
 
-// var cpu: *CHIP8 = undefined;
+pub fn open_rom(path: []const u8) !void {
+    const file = std.fs.cwd().openFile(
+        path,
+        .{ .mode = .read_only },
+    ) catch |err| {
+        std.log.err("Could not open file \"{s}\", error: {any}.\n", .{ path, err });
+        std.process.exit(74);
+    };
+    defer file.close();
+
+    const file_size = (try file.stat()).size;
+    // hardcode max file size for now
+    if (file_size > c8.ram.len - 512) {
+        std.debug.print("File too large\n", .{});
+        return error.FileTooLarge;
+    }
+
+    var reader = file.reader();
+    var i: usize = 0;
+    while (i < file_size) : (i += 1) {
+        c8.ram[i + 512] = try reader.readByte();
+        std.debug.print("{x}\n", .{c8.ram[i]});
+    }
+}
 
 pub fn init() !void {
     if (c.SDL_Init(c.SDL_INIT_VIDEO) != 0) {
@@ -41,7 +65,7 @@ pub fn init() !void {
     const get_instance_proc_addr: vk.PfnGetInstanceProcAddr = @ptrCast(c.SDL_Vulkan_GetVkGetInstanceProcAddr());
     const base_dispatch = try BaseDispatch.load(get_instance_proc_addr);
     const vulkan_version = try base_dispatch.enumerateInstanceVersion();
-    std.debug.print("{}.{}", .{ vk.apiVersionMajor(vulkan_version), vk.apiVersionMinor(vulkan_version) });
+    std.debug.print("\n Vulkan Version {}.{}\n", .{ vk.apiVersionMajor(vulkan_version), vk.apiVersionMinor(vulkan_version) });
 
     texture = c.SDL_CreateTexture(renderer, c.SDL_PIXELFORMAT_RGBA8888, c.SDL_TEXTUREACCESS_STREAMING, 64, 32);
 }
@@ -55,12 +79,20 @@ pub fn cleanUp() void {
 }
 
 pub fn main() !void {
-    // var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
-    // defer arena.deinit();
-    // const allocator = arena.allocator();
+    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    defer arena.deinit();
+    const allocator = arena.allocator();
 
     try init();
     defer cleanUp();
+
+    c8 = try allocator.create(chip8);
+    try c8.init();
+
+    try open_rom("src/test-roms/test.txt");
+
+    // try open_rom("C:\\Users\\Nathaniel\\Desktop\\chip-eight\\src\\test-roms\\test.txt");
+    // try open_rom("C:\\Users\\Nathaniel\\Desktop\\chip-eight\\src\\test-roms\\IBM-Logo.ch8");
 
     var run: bool = true;
     while (run) {
